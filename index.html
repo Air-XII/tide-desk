@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>潮汐 · Tide Desk</title>
+  </head>
+  <body>
+    <div class="wallpaper"></div>
+
+    <!-- 桌面图标层：真机上是空壳，只用来显示分区框和整理模式的图标 -->
+    <div class="icon-layer" id="iconLayer">
+      <div class="icon-area" id="iconArea"></div>
+    </div>
+
+    <!-- 组件层 -->
+    <div class="stage" id="stage">
+      <div class="wg" id="wg-clock">
+        <div class="wg-body" style="display: flex; flex-direction: column; justify-content: center; overflow: hidden">
+          <div class="clock-time"><span id="clkH">09</span>:<span id="clkM">41</span><span class="clock-sec" id="clkS">12</span></div>
+          <div class="clock-date" id="clkDate">2026年11月19日 星期四</div>
+          <div><span class="clock-hi">☀ <span id="clkHi">下午好</span></span></div>
+        </div>
+        <div class="rz"></div>
+      </div>
+
+      <div class="wg" id="wg-tasks">
+        <div class="wg-head"><span class="wg-dot"></span><span class="wg-title">今日任务</span><span class="wg-n" id="tkN">0 / 0</span></div>
+        <div class="wg-body"><div id="taskList"></div></div>
+        <div class="rz"></div>
+      </div>
+
+      <div class="wg" id="wg-cd">
+        <div class="wg-head"><span class="wg-dot"></span><span class="wg-title">即将到期</span><span class="wg-n" id="cdN">—</span></div>
+        <div class="wg-body" id="cdList"></div>
+        <div class="rz"></div>
+      </div>
+
+      <div class="wg" id="wg-remind">
+        <div class="wg-head"><span class="wg-dot"></span><span class="wg-title">提醒</span><span class="wg-n" id="remindN">今天 0 条</span></div>
+        <div class="seg" id="remindSeg">
+          <button class="seg-i on" data-tab="task">任务</button>
+          <button class="seg-i" data-tab="sys">系统通知</button>
+        </div>
+        <div class="wg-body" id="remindList"></div>
+        <div class="rm-f"><button class="btn sm block" id="btnSnooze">稍后</button><button class="btn sm block" id="btnClearAll" style="display: none">全部清除</button><button class="btn sm p block" id="btnAllRemind">查看全部</button></div>
+        <div class="rz"></div>
+      </div>
+
+      <div class="wg" id="wg-theme">
+        <div class="wg-head"><span class="wg-dot"></span><span class="wg-title">外观</span><span class="wg-n" id="themeClose" style="cursor: pointer">✕</span></div>
+        <div class="wg-body">
+          <div class="grp">
+            <div class="grp-t">预设</div>
+            <div class="sws" id="presets"></div>
+          </div>
+          <div class="grp">
+            <div class="grp-t">主色</div>
+            <div class="dots" id="accentDots"></div>
+          </div>
+          <div class="grp">
+            <div class="grp-t">质感</div>
+            <div class="row"><div class="row-l">不透明度</div><input type="range" id="rA" min="20" max="100" value="62" /><div class="row-v" id="vA">62%</div></div>
+            <div class="row"><div class="row-l">毛玻璃</div><input type="range" id="rB" min="0" max="48" value="26" /><div class="row-v" id="vB">26</div></div>
+            <div class="row"><div class="row-l">圆角</div><input type="range" id="rR" min="0" max="32" value="22" /><div class="row-v" id="vR">22</div></div>
+          </div>          <div class="grp">
+            <div class="grp-t">启动</div>
+            <div class="row sw-row">
+              <div class="row-l">开机自启</div>
+              <button class="toggle" id="tAuto" role="switch" aria-checked="false"><i></i></button>
+            </div>
+            <div class="row-note" id="autoNote">开机后自动铺在桌面上</div>
+            <div class="row sw-row" style="margin-top:11px">
+              <div class="row-l">自动备份</div>
+              <button class="btn xs" id="btnBk">打开</button>
+              <div class="row-v" id="bkN">0 份</div>
+            </div>
+            <div class="row-note" id="bkNote">改动前先存一份，保留最近 12 份</div>
+          </div>
+        </div>
+        <div class="rz"></div>
+      </div>
+    </div>
+
+    <!-- 整理工具条 -->
+    <div class="editbar" id="editbar">
+      <span class="eb-t">整理桌面</span>
+      <span class="eb-n" id="ebN">0 个 · 3 区</span>
+      <button class="btn sm" id="btnAddZone">＋ 分区</button>
+      <button class="btn sm" id="btnAutoSort">自动分类</button>
+      <button class="btn sm" id="btnSnap">存快照</button>
+      <button class="btn sm" id="btnRestore">还原</button>
+      <button class="btn sm" id="btnReset">恢复默认</button>
+      <button class="btn sm" id="btnCancel">取消</button>
+      <button class="btn sm p" id="btnApply">应用布局</button>
+    </div>
+
+    <!-- dock：平时只露一条细把手贴任务栏，鼠标放上去才展开 -->
+    <div class="dock-zone" id="dockZone">
+      <div class="dock-handle"></div>
+      <div class="dock">
+        <button id="btnNew" title="新建任务">＋</button>
+        <button id="btnEdit" title="整理桌面图标">▣</button>
+        <button id="btnReload" title="重新读取桌面">⟳</button>
+        <div class="sep"></div>
+        <button id="btnTheme" title="颜色设置">◑</button>
+        <button id="btnQuit" title="退出潮汐">⏻</button>
+      </div>
+    </div>
+
+    <!-- 新建任务浮层 -->
+    <div class="sheet" id="sheet">
+      <h4>新建任务</h4>
+      <div class="field">
+        <label>标题</label>
+        <input type="text" id="fTitle" placeholder="要做什么…" />
+      </div>
+      <div class="field">
+        <label>截止时间（可留空）</label>
+        <input type="datetime-local" id="fDue" />
+      </div>
+      <div class="sheet-f">
+        <button class="btn sm" id="fCancel">取消</button>
+        <button class="btn sm p" id="fOk">添加</button>
+      </div>
+    </div>
+
+    <!-- 悬浮提醒条（独立小窗里才会显示） -->
+    <div class="rbar" id="rbar">
+      <div class="rbar-ic" id="rbarIc">⏰</div>
+      <div class="rbar-b">
+        <div class="rbar-t" id="rbarT">任务标题</div>
+        <div class="rbar-s" id="rbarS">还有 10 分钟截止</div>
+      </div>
+      <div class="rbar-f">
+        <button class="btn sm" id="rDone">完成</button>
+        <button class="btn sm" id="rLater">稍后</button>
+        <button class="rbar-x" id="rClose" title="关掉">✕</button>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

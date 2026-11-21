@@ -1,0 +1,22 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+src-tauri/target/
+
+# Tauri 生成的 schema（每次构建自动重建）
+src-tauri/gen/schemas/
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+desktop.ini
+
+# 日志与临时文件
+*.log
+dev-out.txt
+dev-err.txt
+.DS_Store
