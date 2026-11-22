@@ -22,6 +22,7 @@
 - [Rust](https://rustup.rs/) 1.90+（Tauri 2 的 MSRV）
 - WebView2 Runtime（Win11 自带；Win10 一般也有，没有就装）
 - Visual Studio C++ 生成工具（MSVC 工具链，Tauri 在 Windows 上必需）
+- 以上指的是构建项目所需环境，直接使用可以直接下载 Release 就行
 
 ## 开始
 
